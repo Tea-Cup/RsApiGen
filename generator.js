@@ -76,11 +76,11 @@ function generatePath(classAddress, pathParams, mappingPath) {
   }
 
   if (pathParams.length === 0) {
-    return [`'${classAddress}'`, `'${mappingPath}'`];
+    return [classAddress, `'${mappingPath}'`];
   }
 
   const action = pathParams.reduce(reducePathVars, mappingPath);
-  return [`'${classAddress}'`, '`' + action + '`'];
+  return [classAddress, '`' + action + '`'];
 }
 function generateMethod(method, classAddress) {
   const name = method.name;
@@ -101,8 +101,10 @@ function generateMethod(method, classAddress) {
   }
 
   const optionsString = options.join(',\n');
+  const addrString =
+    address === classAddress ? 'SpringApiFacade.ADDRESS' : `'${address}'`;
   const header = `${name}(${params.join(',')})`;
-  const body = `return this.fetch<UNKNOWN>(${address},${action},{\n${optionsString}\n});`;
+  const body = `return this.fetch<UNKNOWN>(${addrString},${action},{\n${optionsString}\n});`;
   return `${header}{${body}}`;
 }
 
