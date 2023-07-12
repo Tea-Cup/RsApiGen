@@ -24,13 +24,9 @@ async function parseFile(srcname, parser) {
     stderr.write('groovy not found. Please ensure "groovy" is available in PATH');
   }
 
-  const json = await read_stdout(
-    [groovy, parser, srcname]
-      .map((x) => `"${x}"`)
-      .join(' ')
-  );
+  const json = await read_stdout(`"${groovy}" "${parser}" "${srcname}"`);
   const parsed = JSON.parse(json);
-  //writeFileSync('debug.json', JSON.stringify(parsed, undefined, 2), 'utf-8');
+  
   if(parsed.length === 0) {
     stderr.write('No classes found');
     return;
