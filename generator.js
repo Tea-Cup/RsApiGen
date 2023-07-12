@@ -75,6 +75,8 @@ function generatePath(classAddress, pathParams, mappingPath) {
     return generatePath(head, pathParams, tail);
   }
 
+  if(mappingPath.startsWith('/')) mappingPath = mappingPath.substring(1);
+
   if (pathParams.length === 0) {
     return [classAddress, `'${mappingPath}'`];
   }
