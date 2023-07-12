@@ -1,0 +1,28 @@
+{
+  "name": "rs-api-gen",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "SaVlad",
+  "description": "Parse groovy files into a proprietary TS API bindings.",
+  "files": [
+    "./groovy-parser/*",
+    "./generator.js",
+    "./index.js"
+  ],
+  "bin": "./index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tea-Cup/RsApiGen.git"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=16"
+  },
+  "os": [
+    "win32"
+  ],
+  "dependencies": {
+    "java-parser": "^2.0.4",
+    "prettier": "^2.8.8"
+  }
+}
