@@ -8,8 +8,8 @@ function findAnnotation(obj, name) {
 }
 function convertVarType(type) {
   const m = /^([^<]+)<([^>]*)>$/.exec(type);
-  if(m) {
-    if(m[1] === 'List') return convertVarType(m[2]) + '[]';
+  if (m) {
+    if (m[1] === 'List') return convertVarType(m[2]) + '[]';
   }
   const result =
     {
