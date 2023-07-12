@@ -1,3 +1,2 @@
 node_modules
-groovy-parser/groovy/**
-!groovy-parser/groovy/INSTRUCTIONS
+.npmrc

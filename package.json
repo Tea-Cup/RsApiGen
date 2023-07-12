@@ -1,8 +1,9 @@
 {
   "name": "rs-api-gen",
   "version": "1.1.1",
-  "main": "index.js",
+  "main": "main.js",
   "author": "SaVlad",
+  "publisher": "SaVlad",
   "description": "Parse groovy files into a proprietary TS API bindings.",
   "files": [
     "Parser.groovy",
@@ -18,9 +19,48 @@
   },
   "license": "MIT",
   "engines": {
-    "node": "^14.17.0 || ^16.13.0 || >=18.0.0"
+    "node": "^14.17.0 || ^16.13.0 || >=18.0.0",
+    "vscode": ">=1.17.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "rsapigen.folder",
+        "title": "Spawn API bindings here"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "when": "explorerResourceIsFolder",
+          "command": "rsapigen.folder",
+          "group": "rsapigen"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "RsApiGen",
+      "properties": {
+        "rsapigen.groovy": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Path to groovy binary used for parsing. If left empty, PATH is checked instead.",
+          "scope": "machine-overridable"
+        }
+      }
+    }
   },
   "dependencies": {
+    "file-uri-to-path": "^2.0.0",
     "java-parser": "^2.0.4",
     "prettier": "^2.8.8",
     "which": "^3.0.1"

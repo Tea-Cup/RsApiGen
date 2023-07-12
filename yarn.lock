@@ -9,6 +9,11 @@ chevrotain@6.5.0:
   dependencies:
     regexp-to-ast "0.4.0"
 
+file-uri-to-path@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.npmjs.org/file-uri-to-path/-/file-uri-to-path-2.0.0.tgz#7b415aeba227d575851e0a5b0c640d7656403fba"
+  integrity sha512-hjPFI8oE/2iQPVe4gbrJ73Pp+Xfub2+WI2LlXDbsaJBwT5wuMh35WNWVYYTpnz895shtwfyutMFLFywpQAFdLg==
+
 isexe@^2.0.0:
   version "2.0.0"
   resolved "http://rsjshub:4873/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"

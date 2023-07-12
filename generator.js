@@ -1,4 +1,5 @@
 const prettier = require('prettier');
+const { exec } = require('child_process');
 
 function nameEq(name) {
   return (x) => x.name === name;
@@ -75,7 +76,7 @@ function generatePath(classAddress, pathParams, mappingPath) {
     return generatePath(head, pathParams, tail);
   }
 
-  if(mappingPath.startsWith('/')) mappingPath = mappingPath.substring(1);
+  if (mappingPath.startsWith('/')) mappingPath = mappingPath.substring(1);
 
   if (pathParams.length === 0) {
     return [classAddress, `'${mappingPath}'`];
@@ -84,7 +85,7 @@ function generatePath(classAddress, pathParams, mappingPath) {
   const action = pathParams.reduce(reducePathVars, mappingPath);
   return [classAddress, '`' + action + '`'];
 }
-function generateMethod(method, classAddress) {
+function generateMethod(method, classAddress, className) {
   const name = method.name;
 
   const [httpMethod, mappingPath] = getMapping(method);
@@ -104,7 +105,7 @@ function generateMethod(method, classAddress) {
 
   const optionsString = options.join(',\n');
   const addrString =
-    address === classAddress ? 'SpringApiFacade.ADDRESS' : `'${address}'`;
+    address === classAddress ? `${className}.ADDRESS` : `'${address}'`;
   const header = `${name}(${params.join(',')})`;
   const body = `return this.fetch<UNKNOWN>(${addrString},${action},{\n${optionsString}\n});`;
   return `${header}{${body}}`;
@@ -114,28 +115,59 @@ function getClassAddress(cls) {
   const RequestMapping = findAnnotation(cls, 'RequestMapping');
   return RequestMapping?.values[0]?.replace(/\\/g, '/') ?? '';
 }
-module.exports = function (cls) {
+function generateClass(cls, imports, n) {
   const address = getClassAddress(cls);
   if (!address) throw new Error('Unable to find class address');
 
-  const methods = cls.methods.map((x) => generateMethod(x, address)).filter((x) => !!x);
+  const className = `SpringApiFacade${n || ''}`;
+  const methods = cls.methods
+    .map((x) => generateMethod(x, address, className))
+    .filter((x) => !!x);
 
   const src = [
-    "import { SpringApi, SpringGridRequest } from '@system/springApi';",
-    '',
-    'class SpringApiFacade extends SpringApi {',
+    `class ${className} extends SpringApi {`,
     `static readonly ADDRESS = '${address}';`,
     '',
     'constructor() {super(UNKNOWN, UNKNOWN);}',
     '',
     methods.join('\n\n'),
     '}'
-  ].join('\n');
+  ];
 
-  return prettier.format(src, {
+  if (imports)
+    src.unshift("import { SpringApi, SpringGridRequest } from '@system/springApi';", '');
+
+  return prettier.format(src.join('\n'), {
     printWidth: 90,
     trailingComma: 'none',
     singleQuote: true,
     parser: 'typescript'
   });
-};
+}
+
+function read_stdout(command) {
+  exports.debug?.('>', command);
+  return new Promise((resolve, reject) => {
+    exec(command, function (error, stdout, stderr) {
+      if (error) {
+        exports.debug?.('ERR', error);
+        reject(error);
+      }
+      if (stderr) {
+        exports.debug?.('STDERR', stderr);
+        reject(new Error(stderr));
+      }
+      exports.debug?.('STDOUT', error);
+      resolve(stdout);
+    });
+  });
+}
+
+module.exports = {
+  debug: null,
+  parseFile: async function parseFile(srcname, parser, groovy) {
+    const json = await read_stdout(`"${groovy}" "${parser}" "${srcname}"`);
+    const parsed = JSON.parse(json);
+    return parsed.map((x, i) => generateClass(x, i === 0, i));
+  }
+}

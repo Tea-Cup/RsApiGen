@@ -1,0 +1,6 @@
+.gitignore
+.prettierrc
+.vscodeignore
+*.vsix
+yarn.lock
+.npmrc
