@@ -7,6 +7,10 @@ function findAnnotation(obj, name) {
   return obj?.annotations?.find(nameEq(name));
 }
 function convertVarType(type) {
+  const m = /^([^<]+)<([^>]*)>$/.exec(type);
+  if(m) {
+    if(m[1] === 'List') return convertVarType(m[2]) + '[]';
+  }
   const result =
     {
       Long: 'number',

@@ -42,7 +42,7 @@ static ParameterJson convertParameter(Parameter node) {
   def json = new ParameterJson()
   json.annotations = node.getAnnotations().collect(Parser.&convertAnnotation)
   json.name = node.getName()
-  json.type = node.getType().getName()
+  json.type = node.getType().toString()
   return json
 }
 static MethodJson convertMethod(MethodNode node) {
