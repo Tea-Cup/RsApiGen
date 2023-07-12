@@ -1,6 +1,6 @@
 {
   "name": "rs-api-gen",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "main": "index.js",
   "author": "SaVlad",
   "description": "Parse groovy files into a proprietary TS API bindings.",
@@ -19,13 +19,11 @@
   },
   "license": "MIT",
   "engines": {
-    "node": ">=16"
+    "node": "^14.17.0 || ^16.13.0 || >=18.0.0"
   },
-  "os": [
-    "win32"
-  ],
   "dependencies": {
     "java-parser": "^2.0.4",
-    "prettier": "^2.8.8"
+    "prettier": "^2.8.8",
+    "which": "^3.0.1"
   }
 }

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const { exec } = require('child_process');
-const { argv } = require('process');
+const { argv, stdout, stderr } = require('process');
+const which = require('which');
 const generateClass = require('./generator');
 
 function read_stdout(command) {
@@ -17,8 +18,13 @@ function read_stdout(command) {
 }
 
 async function parseFile(srcname) {
+  const groovy = await which('groovy', {nothrow:true});
+  if(!groovy) {
+    stderr.write('groovy not found. Please ensure "groovy" is available in PATH');
+  }
+
   const json = await read_stdout(
-    ['./groovy-parser/groovy/bin/groovy.bat', './groovy-parser/Parser.groovy', srcname]
+    [groovy, './Parser.groovy', srcname]
       .map((x) => `"${x}"`)
       .join(' ')
   );
@@ -33,10 +39,11 @@ async function parseFile(srcname) {
   stdout.write(generated);
 }
 
-const [,,...fileNames] = argv;
-if (fileNames.length === 0) {
-  stderr.write('Filename required');
-} else {
-  parseFile(fileNames[0]);
-}
-
+(async ()=> {
+  const [,,...fileNames] = argv;
+  if (fileNames.length === 0) {
+    stderr.write('Filename required');
+  } else {
+    parseFile(fileNames[0]);
+  }
+})()

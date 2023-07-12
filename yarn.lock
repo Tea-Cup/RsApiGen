@@ -9,6 +9,11 @@ chevrotain@6.5.0:
   dependencies:
     regexp-to-ast "0.4.0"
 
+isexe@^2.0.0:
+  version "2.0.0"
+  resolved "http://rsjshub:4873/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
+  integrity sha1-6PvzdNxVb/iUehDcsFctYz8s+hA=
+
 java-parser@^2.0.4:
   version "2.0.4"
   resolved "http://rsjshub:4873/java-parser/-/java-parser-2.0.4.tgz#74ec358b4209051ec5d2b26dc66464e72262e4a9"
@@ -31,3 +36,10 @@ regexp-to-ast@0.4.0:
   version "0.4.0"
   resolved "http://rsjshub:4873/regexp-to-ast/-/regexp-to-ast-0.4.0.tgz#f3dbcb42726cd71902ba50193f63eab5325cd7cb"
   integrity sha512-4qf/7IsIKfSNHQXSwial1IFmfM1Cc/whNBQqRwe0V2stPe7KmN1U0tWQiIx6JiirgSrisjE0eECdNf7Tav1Ntw==
+
+which@^3.0.1:
+  version "3.0.1"
+  resolved "http://rsjshub:4873/which/-/which-3.0.1.tgz#89f1cd0c23f629a8105ffe69b8172791c87b4be1"
+  integrity sha512-XA1b62dzQzLfaEOSQFTCOd5KFf/1VSzZo7/7TUjnya6u0vGGKzU96UQBZTAThCb2j4/xjBAyii1OhRLJEivHvg==
+  dependencies:
+    isexe "^2.0.0"

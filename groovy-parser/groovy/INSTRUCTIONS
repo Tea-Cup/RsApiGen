@@ -1,4 +1,0 @@
-Place groovy 4.0 in this directory.
-bin directory containing groovy.bat is expected to be here.
-Launched binary path relative to project root is:
-./groovy-parser/groovy/bin/groovy.bat
