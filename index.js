@@ -2,6 +2,7 @@
 const { exec } = require('child_process');
 const { argv, stdout, stderr } = require('process');
 const which = require('which');
+const path = require('path');
 const generateClass = require('./generator');
 
 function read_stdout(command) {
@@ -17,14 +18,14 @@ function read_stdout(command) {
   });
 }
 
-async function parseFile(srcname) {
+async function parseFile(srcname, parser) {
   const groovy = await which('groovy', {nothrow:true});
   if(!groovy) {
     stderr.write('groovy not found. Please ensure "groovy" is available in PATH');
   }
 
   const json = await read_stdout(
-    [groovy, './Parser.groovy', srcname]
+    [groovy, parser, srcname]
       .map((x) => `"${x}"`)
       .join(' ')
   );
@@ -40,10 +41,11 @@ async function parseFile(srcname) {
 }
 
 (async ()=> {
-  const [,,...fileNames] = argv;
+  const [, myname, ...fileNames] = argv;
   if (fileNames.length === 0) {
     stderr.write('Filename required');
   } else {
-    parseFile(fileNames[0]);
+    const parser = path.resolve(myname, '../Parser.groovy');
+    parseFile(fileNames[0], parser);
   }
 })()

@@ -1,12 +1,11 @@
 {
   "name": "rs-api-gen",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "main": "index.js",
   "author": "SaVlad",
   "description": "Parse groovy files into a proprietary TS API bindings.",
   "files": [
-    "groovy-parser/groovy/INSTRUCTIONS",
-    "groovy-parser/Parser.groovy",
+    "Parser.groovy",
     "generator.js",
     "index.js"
   ],
