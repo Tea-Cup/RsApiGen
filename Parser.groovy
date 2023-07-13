@@ -23,8 +23,10 @@ class MethodJson {
   String name
   List<AnnotationJson> annotations
   List<ParameterJson> parameters
+  String returnType
 }
 class ClassJson {
+  String name
   List<AnnotationJson> annotations
   List<MethodJson> methods
 }
@@ -50,11 +52,13 @@ static MethodJson convertMethod(MethodNode node) {
   json.annotations = node.getAnnotations().collect(Parser.&convertAnnotation)
   json.name = node.getName()
   json.parameters = node.getParameters().collect(Parser.&convertParameter)
+  json.returnType = node.getReturnType().toString()
   return json
 }
 static ClassJson convertClass(ClassNode node) {
   def json = new ClassJson()
   json.annotations = node.getAnnotations().collect(Parser.&convertAnnotation)
+  json.name = node.toString()
   json.methods = node.getMethods().collect(Parser.&convertMethod)
   return json
 }

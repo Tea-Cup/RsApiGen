@@ -1,5 +1,6 @@
 const prettier = require('prettier');
 const { exec } = require('child_process');
+const { writeFileSync } = require('fs');
 
 function nameEq(name) {
   return (x) => x.name === name;
@@ -7,16 +8,22 @@ function nameEq(name) {
 function findAnnotation(obj, name) {
   return obj?.annotations?.find(nameEq(name));
 }
-function convertVarType(type) {
+function convertType(type) {
+  if(type === 'void -> void') return 'void';
+  if(!type || type === '?') return 'UNKNOWN';
+
   const m = /^([^<]+)<([^>]*)>$/.exec(type);
   if (m) {
-    if (m[1] === 'List') return convertVarType(m[2]) + '[]';
+    if (m[1] === 'List') return convertType(m[2]) + '[]';
+    if (m[1] === 'ResponseEntity') return convertType(m[2]);
   }
+
   const result =
     {
       Long: 'number',
       Boolean: 'boolean',
-      GridRequest: 'SpringGridRequest'
+      GridRequest: 'SpringGridRequest',
+      String: 'string'
     }[type] ?? type;
   return result.endsWith('Dto') ? result.slice(0, -3) : result;
 }
@@ -58,9 +65,9 @@ function generateParameters(method) {
 
     // TODO: figure out optional params.
     if (optional) {
-      optionalHeader.push(`${par.name}: ${convertVarType(par.type)}`);
+      optionalHeader.push(`${par.name}: ${convertType(par.type)}`);
     } else {
-      header.push(`${par.name}: ${convertVarType(par.type)}`);
+      header.push(`${par.name}: ${convertType(par.type)}`);
     }
   }
 
@@ -94,6 +101,7 @@ function generateMethod(method, classAddress, className) {
   const genParams = generateParameters(method);
   const params = genParams.header;
   const [address, action] = generatePath(classAddress, genParams.path, mappingPath);
+  const retType = convertType(method.returnType);
 
   const options = [`method: '${httpMethod}'`];
   if (genParams.body) {
@@ -103,11 +111,12 @@ function generateMethod(method, classAddress, className) {
     options.push(`params: {\n${genParams.options.join(',\n')}\n}`);
   }
 
+  const fetchString = retType === 'string' ? 'fetchText' : `fetch<${retType}>`;
   const optionsString = options.join(',\n');
   const addrString =
     address === classAddress ? `${className}.ADDRESS` : `'${address}'`;
   const header = `${name}(${params.join(',')})`;
-  const body = `return this.fetch<UNKNOWN>(${addrString},${action},{\n${optionsString}\n});`;
+  const body = `return this.${fetchString}(${addrString},${action},{\n${optionsString}\n});`;
   return `${header}{${body}}`;
 }
 
@@ -115,11 +124,11 @@ function getClassAddress(cls) {
   const RequestMapping = findAnnotation(cls, 'RequestMapping');
   return RequestMapping?.values[0]?.replace(/\\/g, '/') ?? '';
 }
-function generateClass(cls, imports, n) {
+function generateClass(cls, imports) {
   const address = getClassAddress(cls);
   if (!address) throw new Error('Unable to find class address');
 
-  const className = `SpringApiFacade${n || ''}`;
+  const className = cls.name.split(/\./g).slice(-1)[0];
   const methods = cls.methods
     .map((x) => generateMethod(x, address, className))
     .filter((x) => !!x);
@@ -168,6 +177,7 @@ module.exports = {
   parseFile: async function parseFile(srcname, parser, groovy) {
     const json = await read_stdout(`"${groovy}" "${parser}" "${srcname}"`);
     const parsed = JSON.parse(json);
+    // writeFileSync('debug.json', JSON.stringify(parsed, undefined, 2));
     return parsed.map((x, i) => generateClass(x, i === 0, i));
   }
 }
