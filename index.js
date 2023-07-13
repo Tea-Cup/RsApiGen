@@ -16,7 +16,7 @@ const { parseFile } = require('./generator');
   }
 
   const parser = path.resolve(myname, '../Parser.groovy');
-  const generated = parseFile(fileNames[0], parser, groovy);
+  const generated = await parseFile(fileNames[0], parser, groovy);
 
   return generated.join('\n\n');
 })()
